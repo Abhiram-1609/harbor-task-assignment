@@ -6,8 +6,8 @@ authors = []
 keywords = ["json", "aggregation"]
 
 [metadata]
-author_name = "Your Name"
-author_email = "your.email@example.com"
+author_name = "Abhiram"
+author_email = "xelron@gmail.com"
 difficulty = "easy"
 category = "data-processing"
 tags = ["json", "aggregation"]
