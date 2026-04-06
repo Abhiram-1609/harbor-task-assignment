@@ -1,50 +1,99 @@
-# Harbor task: JSON department salary totals
+# Harbor task — JSON department salary totals
 
-This repository contains a **Harbor** benchmark task: read employee records from JSON, aggregate salaries by department, and write a deterministic `output.json`.
+**A small [Harbor](https://github.com/laude-institute/harbor) benchmark task** for agent evaluation: read JSON employee records, compute total salary per department, and write a correctly formatted `output.json`.
 
-## What’s inside
+If you are browsing this repo on GitHub, everything you need to understand and run the task is summarized here. Deeper file-level detail lives in the task folder linked below.
 
-| Path | Description |
-|------|-------------|
-| [`harbor_tasks/json-dept-salary-totals/`](harbor_tasks/json-dept-salary-totals/) | Full task: `instruction.md`, `task.toml`, `environment/`, `solution/`, `tests/` |
-| [`harbor_tasks/json-dept-salary-totals/README.md`](harbor_tasks/json-dept-salary-totals/README.md) | Task-specific details, I/O spec, and run commands |
+---
 
-**Task package name:** `harbor/json-dept-salary-totals`  
-**Difficulty:** easy · **Category:** data-processing
+## About this repository
+
+This project is a **single, self-contained Harbor task** (not the full Harbor framework). It was built for a **new-hire / assignment** style workflow: the task passes **Oracle** (reference solution) and **NOP** (no pre-baked success) checks, and is suitable to show in a portfolio or attach to a pull request against upstream Harbor.
+
+**What “success” means for an agent**
+
+- Input file: `/app/records.json` (array of `{ employee, department, salary }`).
+- Output file: `/app/output.json` — object of `department → total salary`, keys **sorted A–Z**, **2-space** JSON indent, **newline** at end of file.
+
+---
+
+## Repository layout
+
+```
+harbor_tasks/json-dept-salary-totals/
+├── task.toml           # Metadata, timeouts, CPU/RAM/disk
+├── instruction.md      # Instructions shown to the agent
+├── environment/        # Dockerfile + sample input only
+├── solution/           # Reference solution (oracle)
+└── tests/              # Verifier script + pytest tests
+```
+
+| Item | Value |
+|------|--------|
+| Task name (`task.toml`) | `harbor/json-dept-salary-totals` |
+| Difficulty | easy |
+| Category | data-processing |
+
+More detail: **[`harbor_tasks/json-dept-salary-totals/README.md`](harbor_tasks/json-dept-salary-totals/README.md)**
+
+---
+
+## Who this is for
+
+- **Reviewers / instructors** — quick sanity check of task structure and validation expectations.
+- **You, running it locally** — clone this repo, clone Harbor, run `harbor run` pointing at `harbor_tasks/json-dept-salary-totals/`.
+- **Contributors** — the same task may also be proposed via a fork/PR to [laude-institute/harbor](https://github.com/laude-institute/harbor) under `examples/tasks/` (naming may differ slightly, e.g. `test_state.py`).
+
+---
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/)
+- [Docker](https://docs.docker.com/get-docker/) (Docker Desktop on Windows is fine; WSL is often used with Harbor.)
 - [uv](https://docs.astral.sh/uv/getting-started/installation/)
-- A local clone of [laude-institute/harbor](https://github.com/laude-institute/harbor) (to run the `harbor` CLI)
+- A clone of **[laude-institute/harbor](https://github.com/laude-institute/harbor)** and `uv sync` inside that repo so `uv run harbor …` works.
 
-## Run the task
+---
 
-From your Harbor clone (after `uv sync`), use the **absolute or relative path** to this task on your machine:
+## Quick start (run the task)
 
-```bash
-cd /path/to/harbor
-uv run harbor run --agent oracle --path /path/to/this/repo/harbor_tasks/json-dept-salary-totals --job-name oracle
-uv run harbor run --agent nop    --path /path/to/this/repo/harbor_tasks/json-dept-salary-totals --job-name nop
-```
-
-**Expect:** Oracle mean reward **1.0**, NOP mean reward **0.0**.
-
-Lint:
+In a terminal, from your **Harbor** clone (after `uv sync`):
 
 ```bash
-uvx ruff check /path/to/this/repo/harbor_tasks/json-dept-salary-totals/tests/test_outputs.py
+# Replace TASK_PATH with the path to this repo’s task folder on your machine.
+export TASK_PATH="/path/to/harbor-task-assignment/harbor_tasks/json-dept-salary-totals"
+
+uv run harbor run --agent oracle --path "$TASK_PATH" --job-name oracle-json-dept
+uv run harbor run --agent nop    --path "$TASK_PATH" --job-name nop-json-dept
 ```
 
-## Upstream contribution
+**Expected results**
 
-An equivalent example task lives under **`examples/tasks/json-dept-salary-totals/`** in a fork of Harbor for pull requests to [laude-institute/harbor](https://github.com/laude-institute/harbor). This repo keeps the assignment layout (`harbor_tasks/`, `test_outputs.py`) in one place.
+- **Oracle** — mean reward **1.0** (reference solution + tests pass).
+- **NOP** — mean reward **0.0** (agent does nothing; output must not appear by default).
+
+Lint the pytest file:
+
+```bash
+uvx ruff check "$TASK_PATH/tests/test_outputs.py"
+```
+
+On Windows PowerShell you can set the path instead:
+
+```powershell
+$TASK_PATH = "C:\Users\YOUR_USER\Desktop\HARBOR\harbor_tasks\json-dept-salary-totals"
+cd C:\path\to\harbor-repo
+uv run harbor run --agent oracle --path $TASK_PATH --job-name oracle-json-dept
+```
+
+---
 
 ## References
 
-- [Harbor repository](https://github.com/laude-institute/harbor)
-- [Harbor task documentation](https://harborframework.com/docs/tasks) (if published for your Harbor version)
+- [laude-institute/harbor](https://github.com/laude-institute/harbor) — framework and CLI
+- Task format and concepts: see Harbor’s docs in that repository (e.g. `docs/` and `examples/tasks/`)
+
+---
 
 ## License
 
-Unless noted otherwise, follow the license of the parent project you bundle this task with (e.g. Harbor’s license when contributing upstream).
+Align with the license of the project you bundle or contribute this task with (for example, Harbor’s license when opening a PR upstream). This repo only adds task files and documentation.
